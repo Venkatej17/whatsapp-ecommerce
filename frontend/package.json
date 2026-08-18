@@ -100,7 +100,18 @@
     "node": ">=18.0.0 <23.0.0"
   },
   "overrides": {
-    "ajv-keywords": "^3.5.2"
+    "terser-webpack-plugin": {
+      "schema-utils": "3.3.0"
+    },
+    "fork-ts-checker-webpack-plugin": {
+      "schema-utils": "3.3.0"
+    },
+    "css-minimizer-webpack-plugin": {
+      "schema-utils": "3.3.0"
+    },
+    "webpack": {
+      "schema-utils": "3.3.0"
+    }
   },
   "resolutions": {
     "react-router": "7.15.1",
