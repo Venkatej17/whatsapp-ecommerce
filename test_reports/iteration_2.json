@@ -1,0 +1,36 @@
+{
+  "summary": "Backend role-isolation regression passed; desktop Master Admin UI passed, but logout breaks the React app before the owner flow can load.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "ClientWorkspace useEffect",
+        "issue": "Logging out from Master Admin causes an uncaught React runtime error overlay: 'destroy is not a function', preventing the login screen/owner workspace from rendering in the same session.",
+        "selector": "[data-testid=logout-button]",
+        "priority": "HIGH"
+      }
+    ],
+    "integration_issues": [
+      {
+        "flow": "Master Admin logout -> Fresh Mart owner login",
+        "issue": "Flow stops after logout because ClientWorkspace's useEffect(load, []) returns the Promise from load; React treats it as an effect cleanup function.",
+        "affected_selectors": ["[data-testid=logout-button]", "[data-testid=client-workspace-identity]"]
+      }
+    ],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/test_role_isolation.py", "/app/test_reports/pytest/role_isolation.xml"],
+  "action_items": ["Change ClientWorkspace useEffect to a synchronous effect callback that invokes load() without returning its Promise, then retest logout and owner workspace flows."],
+  "critical_code_review_comments": ["ClientWorkspace line 30 uses useEffect(load, []), while load returns axios Promise; React 18 development cleanup invokes the Promise as destroy().", "Several secondary navigation modules and refresh/settings controls are placeholders or have no handler; not exercised as core operations."],
+  "updated_files": ["/app/backend/tests/test_role_isolation.py", "/app/test_reports/iteration_2.json"],
+  "success_rate": {"backend": "100% (4/4)", "frontend": "50% (admin desktop pass; owner/mobile blocked by runtime error)"},
+  "seed_data_creation": "Created TEST Role Isolation Item and TEST UI Product; order FM-10243 was advanced to PICKING during tests.",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Admin login, admin overview/client list, role endpoint restrictions, cookie auth, tenant derivation, product POST, order PATCH, and logout API passed. Browser logout from admin reproduced destroy-is-not-a-function overlay before owner UI.",
+  "rca of the issue": "Reproduce: login as admin in browser, click [data-testid=logout-button], then observe uncaught overlay. In App.js ClientWorkspace defines load = () => api.get(...).then(...), which returns a Promise, and passes it directly to useEffect(load, []). React expects an optional cleanup function, later calls the Promise as destroy, and throws TypeError. Wrap the call in useEffect(() => { load(); }, []).",
+  "test_credentials": "Used credentials from /app/memory/test_credentials.md; no APIs mocked."
+}

@@ -1,0 +1,42 @@
+{
+  "summary": "Iteration 5 features fully verified. Backend: 7/7 new tests pass (test_iteration5.py) covering WhatsApp simulator confirm→Stripe payment link, order persistence of payment_link/provider/intent_id, Meta creds save (encrypted, no token leak), tenant_glow reflects connected without leaking token, onboarding markdown with all required fields, and payment intent tenant isolation (glow→fresh intent returns 404). Regression: 29/29 prior tests still green (test_commerce_ext.py + test_commerce_os.py). Frontend: Master Admin → Fresh Mart config drawer — Meta creds modal (meta-phone-id/meta-waba-id/meta-token/meta-save) works and shows toast 'WhatsApp credentials saved'; Onboarding playbook modal renders full markdown (1692 chars incl 'Fresh Mart' + 'owner@freshmart.com') with Copy and Download buttons; WhatsApp simulator confirm with qty 2 renders '💳 Pay securely here' + checkout.stripe.com link in the bot bubble.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "POST /api/admin/whatsapp/simulate (confirm)", "issue": "When cart total falls below Stripe INR minimum (~₹50), _create_payment_link silently swallows the Stripe error and the WhatsApp bot's confirm reply omits the payment link — the customer sees only the order/pickup code. Consider surfacing a clearer note like 'payment link unavailable for small orders' or enforcing a minimum-order guard in the bot."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_iteration5.py",
+    "/app/test_reports/pytest/iteration5.xml"
+  ],
+  "action_items": [
+    "OPTIONAL: In commerce_ext._create_payment_link, log the swallowed Stripe/Razorpay exception (currently bare `except Exception: return None`) so silent no-payment-link scenarios (e.g., INR minimum) are diagnosable in production.",
+    "OPTIONAL: When simulator/bot cannot mint a payment link, append a short note to the WhatsApp reply (e.g., 'Payment link will follow' or 'Add more items — Stripe minimum ₹50') instead of falling silent."
+  ],
+  "critical_code_review_comments": [
+    "commerce_ext.py is now ~830 lines mixing cart+WhatsApp+payments+packs+creds+onboarding-doc. Time to split into commerce_ext/{cart,whatsapp,payments,packs,onboarding}.py.",
+    "_create_payment_link uses `except Exception: pass` (Razorpay) and `except Exception: return None` (Stripe) — swallowing every failure. At minimum add logging.exception; ideally raise a domain error the caller decides to log/degrade on.",
+    "save_whatsapp_creds does not flip onboarding.whatsapp_connected=True — the review request explicitly notes 'either is acceptable' but if the intent is auto-progress, the checklist won't advance until manual apply.",
+    "Onboarding doc uses `f-string` with hard-coded fallback 'https://your-commerceos-url' when PUBLIC_APP_URL is unset — env is currently set, so fine, but move fallback to a shared constant.",
+    "Meta access token is encrypted at rest ✓ and not leaked in GET /api/admin/tenants/{id} ✓ — verified. However /api/admin/tenants/{id} does still return the raw `access_token_enc` ciphertext; consider stripping it in admin GETs so only the boolean 'connected' state ships to the client.",
+    "_send_whatsapp is called unconditionally from the webhook path; if the tenant hasn't connected WhatsApp, it returns {ok:false} but the code discards the result. Add audit/log so operators can see failed outbound attempts."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_iteration5.py",
+    "/app/test_reports/pytest/iteration5.xml",
+    "/app/test_reports/iteration_5.json"
+  ],
+  "success_rate": {"backend": "100% (7/7 new + 29/29 regression)", "frontend": "100% (Meta modal + Onboarding modal + Simulator payment link)"},
+  "test_credentials": "Used credentials from /app/memory/test_credentials.md — no changes.",
+  "seed_data_creation": "Created 3 UI simulator orders/carts/customers/conversations under tenant_fresh (phones +919000055555, +919000077777, +919000099999) and 1 pytest order (phone +919888888888 Priya). All cleaned up: db.orders/carts/customers/conversations for those phones deleted; db.payment_intents cleared for tenant_fresh; FM-TOM-01 stock restored (+4 units of test debits); tenant_fresh + tenant_glow integrations.whatsapp reset to {connected:false, provider:'Meta Cloud API'}. Note: pre-existing 'TEST Biz e88199' (tenant_747036630f) was left in place — leftover from a prior testing agent, not created by this run.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "New backend test file /app/backend/tests/test_iteration5.py (7 tests, ~4s). All 4 iteration-5 capabilities exercised end-to-end: payment link in WhatsApp confirm, Meta creds save+encrypt+no-leak, onboarding doc content, payment_intent tenant isolation (glow→fresh 404 / fresh→own 200). Frontend testids: config-whatsapp-action, meta-creds-modal, meta-phone-id, meta-waba-id, meta-token, meta-save; view-onboarding-doc, onboarding-doc-modal, onboarding-doc-body, onboarding-doc-copy, onboarding-doc-download, onboarding-doc-close. Simulator quick buttons still present (sim-quick-hi/shop/cart/pickup/confirm) but the value of sim-quick-add-FM-TOM-01 is a single-qty add — the review's flow needs qty=2 (e.g., type 'add FM-TOM-01 2' manually) to clear Stripe INR minimum ~₹50 and get a payment link. Left-over 'TEST Biz e88199' (tenant_747036630f) exists from prior run and is safe to ignore or clean.",
+  "rca of the issue": "Confirm reply missing Stripe payment link when subtotal<₹50 — Stripe rejects amounts below its INR minimum, exception is silently swallowed in _create_payment_link, so bot reply falls back to the no-payment branch. Reproduction: POST /api/admin/whatsapp/simulate 'add FM-TOM-01' (qty 1 => ₹40) then 'pickup' then 'confirm' → reply omits '💳 Pay securely here'. Mitigation: raise minimum via bot guard, or catch+log the Stripe exception and inform the customer."
+}

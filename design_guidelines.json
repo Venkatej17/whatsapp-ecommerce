@@ -1,0 +1,51 @@
+{
+  "app_context": "Multi-Tenant WhatsApp Commerce + Ecommerce Management + Order Fulfilment SaaS (Master Admin + Tenant Client Dashboard)",
+  "design_archetype": "Swiss & High-Contrast (Authority, Clarity, Truth) combined with Performance Pro for inventory and order operations",
+  "typography": {
+    "headings": {
+      "font_family": "Plus Jakarta Sans, sans-serif",
+      "weights": ["600", "700"],
+      "letter_spacing": "tracking-tight"
+    },
+    "body": {
+      "font_family": "Inter, sans-serif",
+      "weights": ["400", "500"]
+    },
+    "mono": {
+      "font_family": "JetBrains Mono, monospace"
+    }
+  },
+  "colors": {
+    "primary": "#0F172A",
+    "accent": "#25D366",
+    "background": "#F8FAFC",
+    "card_background": "#FFFFFF",
+    "border": "#E2E8F0",
+    "text_main": "#0F172A",
+    "text_muted": "#64748B",
+    "forbidden_colors": ["#7351B7", "#1B93A4"]
+  },
+  "visual_enhancers": {
+    "border_radius": "rounded-lg",
+    "shadows": "shadow-sm hover:shadow-md transition-shadow",
+    "glassmorphism": "backdrop-blur-xl bg-white/80 border border-slate-200/60"
+  },
+  "component_path": "/app/frontend/src/components",
+  "instructions_to_main_agent": [
+    "Build a production-ready, multi-tenant SaaS platform with Master Admin and Client Dashboard views.",
+    "Support tenant switching, tenant isolation, products/catalog management, inventory alerts, order fulfilment queues (picking/packing/delivery/pickup), WhatsApp chat assistant simulator, customer CRM, and analytics.",
+    "Every interactive element and key info badge MUST include a data-testid attribute.",
+    "Ensure all modals and dropdowns have opaque backgrounds.",
+    "Use Sonner for toast notifications."
+  ],
+  "universal_guidelines": [
+    "Never use full-screen transparent headers without blur.",
+    "Never use prohibited colors #7351B7 or #1B93A4.",
+    "Ensure all interactive items have hover and focus states.",
+    "Respect dark/light modes and maintain high contrast."
+  ],
+  "image_urls": {
+    "warehouse_dashboard": "https://images.unsplash.com/photo-1648824572347-517357c9c44e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDZ8MHwxfHNlYXJjaHwxfHxlY29tbWVyY2UlMjB3YXJlaG91c2UlMjBpbnZlbnRvcnklMjBkYXNoYm9hcmQlMjBpbnRlcmZhY2V8ZW58MHx8fHwxNzg2ODIwNzU1fDA&ixlib=rb-4.1.0&q=85",
+    "whatsapp_commerce": "https://images.unsplash.com/photo-1661862649743-2799867c32b0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA3MDB8MHwxfHNlYXJjaHwyfHxyZXRhaWwlMjBzdG9yZSUyMGN1c3RvbWVyJTIwYnV5aW5nJTIwb24lMjB3aGF0c2FwcCUyMHBob25lfGVufDB8fHx8MTc4NjgyMDc1OHww&ixlib=rb-4.1.0&q=85"
+  }
+}
