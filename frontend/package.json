@@ -98,6 +98,7 @@
     "overrides": {
     "ajv": "^8.17.1"
      },
+  },
 
   "resolutions": {
     "react-router": "7.15.1",
