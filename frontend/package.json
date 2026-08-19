@@ -96,10 +96,8 @@
     "postcss": "8.5.10",
     "tailwindcss": "3.4.17"
   },
-  "overrides": {
-  "ajv": "^8.17.1",
-  "ajv-keywords": "^5.1.0"
-}
+  "engines": {
+    "node": ">=18.0.0 <23.0.0"
   },
   "resolutions": {
     "react-router": "7.15.1",
