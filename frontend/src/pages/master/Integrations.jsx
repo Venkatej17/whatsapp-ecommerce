@@ -40,10 +40,9 @@ export default function Integrations() {
         </div>
         <ul className="platform-list">
           <li><b>WhatsApp / Meta</b><small>Business account, phone number, webhook, template registration.</small></li>
-          <li><b>Catalog connectors</b><small>Choose internal, Shopify, or WooCommerce sync per client.</small></li>
-          <li><b>Payments</b><small>Provider selection, mode, COD toggle, UPI, refunds.</small></li>
-          <li><b>Automation engine</b><small>Enable/disable event flows for each tenant.</small></li>
-          <li><b>Templates</b><small>Master library, per-tenant customization, approval workflow.</small></li>
+          <li><b>Catalog</b><small>Internal product catalog per tenant.</small></li>
+          <li><b>Payments</b><small>Razorpay (online) + cash on delivery, configurable per client.</small></li>
+          <li><b>Templates</b><small>Industry template packs applied at onboarding, customizable per tenant.</small></li>
         </ul>
       </div>
     </section>

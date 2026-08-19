@@ -26,7 +26,7 @@ const NAV = [
   ["Analytics", BarChart3],
 ];
 
-export default function ClientShell({ user, onLogout }) {
+export default function ClientShell({ user, onLogout, onUserUpdate }) {
   const [page, setPage] = useState("Overview");
   const [data, setData] = useState({ tenant: {}, orders: [], products: [], metrics: {} });
 
@@ -45,7 +45,7 @@ export default function ClientShell({ user, onLogout }) {
       <aside className="sidebar" data-testid="client-sidebar">
         <div className="brand">
           <div className="brand-mark"><Zap size={18} fill="currentColor" /></div>
-          <div><b>commerce<span>OS</span></b><small>CLIENT WORKSPACE</small></div>
+          <div><b>agent<span>Opscom</span></b><small>CLIENT WORKSPACE</small></div>
         </div>
         <div className="workspace-label">YOUR BUSINESS</div>
         <div className="tenant-switch locked-workspace" data-testid="client-workspace-identity">
@@ -66,7 +66,7 @@ export default function ClientShell({ user, onLogout }) {
         </div>
       </aside>
       <main className="main">
-        <Topbar user={user} onLogout={onLogout} label={page} />
+        <Topbar user={user} onLogout={onLogout} label={page} onUserUpdate={onUserUpdate} />
         {page === "Overview" && <Overview data={data} setPage={setPage} refresh={load} />}
         {page === "Products" && <Products refresh={load} />}
         {page === "Inventory" && <Inventory refresh={load} />}

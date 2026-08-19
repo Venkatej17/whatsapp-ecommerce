@@ -54,7 +54,7 @@ export default function Settings() {
         <div className="panel settings-card">
           <b>Access</b>
           <ul>
-            <li><CheckCircle2 size={14} color="#25a65a" /> <small>Owner login</small><b>One per workspace (MVP)</b></li>
+            <li><CheckCircle2 size={14} color="#c2410c" /> <small>Owner login</small><b>One per workspace (MVP)</b></li>
             <li><ShieldCheck size={14} color="#2563eb" /> <small>Tenant isolation</small><b>Backend-enforced</b></li>
           </ul>
         </div>

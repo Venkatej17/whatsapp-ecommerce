@@ -66,7 +66,7 @@ export default function Overview({ data, setPage, refresh }) {
               ["Fulfilment configured", t.onboarding?.fulfilment_configured],
             ].map(([label, done]) => (
               <div key={label} className={done ? "done" : ""}>
-                <CheckCircle2 size={15} color={done ? "#25a65a" : "#94a3b8"} />
+                <CheckCircle2 size={15} color={done ? "#c2410c" : "#94a3b8"} />
                 <b>{label}</b><small>{done ? "Configured" : "Ask platform team"}</small>
               </div>
             ))}

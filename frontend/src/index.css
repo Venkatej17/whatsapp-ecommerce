@@ -2,7 +2,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-:root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--wash:#f8fafc;--green:#25d366;--blue:#2563eb;--orange:#ea8b28;--red:#dc4b4b}*{box-sizing:border-box}body{margin:0;background:var(--wash);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}h1,h2,h3,b,strong{font-family:'Plus Jakarta Sans',sans-serif}small{display:block;color:var(--muted);font-size:11px;margin-top:4px}p{color:var(--muted);font-size:13px;margin:6px 0}.mono{font-family:'DM Mono',monospace;font-size:12px}
+:root{--ink:#000000;--muted:#64748b;--line:#e2e8f0;--wash:#f8fafc;--green:#f97316;--blue:#2563eb;--orange:#f97316;--red:#dc4b4b}*{box-sizing:border-box}body{margin:0;background:var(--wash);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}button,input{font:inherit}button{cursor:pointer}h1,h2,h3,b,strong{font-family:'Plus Jakarta Sans',sans-serif}small{display:block;color:var(--muted);font-size:11px;margin-top:4px}p{color:var(--muted);font-size:13px;margin:6px 0}.mono{font-family:'DM Mono',monospace;font-size:12px}
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

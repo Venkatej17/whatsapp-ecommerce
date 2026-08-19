@@ -221,7 +221,7 @@ function ConfigDrawer({ tenantId, onClose, onSaved }) {
             <div className="checklist-grid">
               {STEPS.map(([k, label]) => (
                 <div key={k} className={`checklist-line ${onb[k] ? "done" : ""}`} data-testid={`onboarding-${k}`}>
-                  {onb[k] ? <CheckCircle2 size={15} color="#25a65a" /> : <Circle size={15} color="#94a3b8" />}
+                  {onb[k] ? <CheckCircle2 size={15} color="#c2410c" /> : <Circle size={15} color="#94a3b8" />}
                   <b>{label}</b><small>{onb[k] ? "Configured" : "Pending"}</small>
                 </div>
               ))}

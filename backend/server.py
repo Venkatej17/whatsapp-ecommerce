@@ -89,6 +89,12 @@ class LoginIn(BaseModel):
     password: str
 
 
+class ProfileUpdateIn(BaseModel):
+    name: Optional[str] = None
+    current_password: Optional[str] = None
+    new_password: Optional[str] = None
+
+
 class ProductIn(BaseModel):
     name: str
     category: str
@@ -372,6 +378,27 @@ async def me(user=Depends(current_user)):
     return user
 
 
+@api.patch("/auth/profile")
+async def update_profile(payload: ProfileUpdateIn, user=Depends(current_user)):
+    updates = {}
+    if payload.name and payload.name.strip():
+        updates["name"] = payload.name.strip()
+    if payload.new_password:
+        if not payload.current_password:
+            raise HTTPException(400, "Current password is required to set a new password")
+        full_user = await db.users.find_one({"id": user["id"]})
+        if not full_user or not verify_password(payload.current_password, full_user["password_hash"]):
+            raise HTTPException(401, "Current password is incorrect")
+        if len(payload.new_password) < 8:
+            raise HTTPException(400, "New password must be at least 8 characters")
+        updates["password_hash"] = hash_password(payload.new_password)
+    if not updates:
+        raise HTTPException(400, "Nothing to update")
+    await db.users.update_one({"id": user["id"]}, {"$set": updates})
+    updated = await db.users.find_one({"id": user["id"]}, {"_id": 0, "password_hash": 0})
+    return updated
+
+
 @api.post("/auth/logout")
 async def logout(response: Response):
     response.delete_cookie("access_token", path="/")
@@ -404,6 +431,11 @@ async def admin_overview(user=Depends(master_user)):
     summaries = [_tenant_summary(t) for t in tenants]
     total_tpl = await db.templates.count_documents({})
     total_users = await db.users.count_documents({"role": "TENANT_OWNER"})
+    # Real integration health: % of (WhatsApp + catalog) checks actually connected across all tenants,
+    # not a placeholder number.
+    checks_total = len(tenants) * 2
+    checks_connected = sum((1 if s["whatsapp_connected"] else 0) + (1 if s["catalog_connected"] else 0) for s in summaries)
+    integration_health = round(checks_connected / checks_total * 100) if checks_total else 100
     return {
         "tenants": summaries,
         "metrics": {
@@ -411,8 +443,7 @@ async def admin_overview(user=Depends(master_user)):
             "active_tenants": sum(t.get("status") == "Active" for t in tenants),
             "onboarding_tenants": sum(t.get("status") == "Onboarding" for t in tenants),
             "platform_revenue": sum(t.get("revenue", 0) for t in tenants),
-            "integration_health": 92,
-            "automation_runs": 1842,
+            "integration_health": integration_health,
             "template_library": total_tpl,
             "owner_logins": total_users,
         },

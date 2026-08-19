@@ -27,7 +27,7 @@ export default function App() {
   if (checking) {
     return (
       <div className="loading-screen" data-testid="loading-screen">
-        <div className="loading-dot" /> Loading Commerce OS…
+        <div className="loading-dot" /> Loading Agent Opscom…
       </div>
     );
   }
@@ -38,9 +38,9 @@ export default function App() {
       {!user ? (
         <Login onLogin={setUser} />
       ) : user.role === "MASTER_ADMIN" ? (
-        <MasterShell user={user} onLogout={logout} />
+        <MasterShell user={user} onLogout={logout} onUserUpdate={setUser} />
       ) : (
-        <ClientShell user={user} onLogout={logout} />
+        <ClientShell user={user} onLogout={logout} onUserUpdate={setUser} />
       )}
     </>
   );

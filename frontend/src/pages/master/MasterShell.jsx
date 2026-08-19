@@ -23,7 +23,7 @@ const NAV = [
   ["Audit", ClipboardList],
 ];
 
-export default function MasterShell({ user, onLogout }) {
+export default function MasterShell({ user, onLogout, onUserUpdate }) {
   const [page, setPage] = useState("Overview");
   const [overview, setOverview] = useState({ tenants: [], metrics: {} });
 
@@ -40,7 +40,7 @@ export default function MasterShell({ user, onLogout }) {
       <aside className="sidebar" data-testid="master-sidebar">
         <div className="brand">
           <div className="brand-mark"><Zap size={18} fill="currentColor" /></div>
-          <div><b>commerce<span>OS</span></b><small>CONTROL PLANE</small></div>
+          <div><b>agent<span>Opscom</span></b><small>CONTROL PLANE</small></div>
         </div>
         <div className="workspace-label">MASTER ADMIN</div>
         <div className="admin-identity">
@@ -60,8 +60,8 @@ export default function MasterShell({ user, onLogout }) {
         </div>
       </aside>
       <main className="main">
-        <Topbar user={user} onLogout={onLogout} label={page} />
-        {page === "Overview" && <Overview data={overview} setPage={setPage} />}
+        <Topbar user={user} onLogout={onLogout} label={page} onUserUpdate={onUserUpdate} />
+        {page === "Overview" && <Overview data={overview} setPage={setPage} user={user} />}
         {page === "Clients" && <Clients onChange={load} />}
         {page === "Integrations" && <Integrations />}
         {page === "Templates" && <Templates />}

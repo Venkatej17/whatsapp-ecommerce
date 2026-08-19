@@ -1,16 +1,17 @@
-import { BarChart3, Building2, CheckCircle2, ChevronRight, Cloud, Package, Plus, Zap } from "lucide-react";
+import { BarChart3, Building2, CheckCircle2, ChevronRight, Cloud, Package, Plus } from "lucide-react";
 import Metric from "../../components/shared/Metric";
 import Status from "../../components/shared/Status";
 import { money } from "../../api";
 
-export default function Overview({ data, setPage }) {
+export default function Overview({ data, setPage, user }) {
   const m = data.metrics || {};
+  const firstName = user?.name?.split(" ")[0] || "there";
   return (
     <section className="content">
       <div className="page-heading">
         <div>
           <div className="eyebrow"><span className="pulse" /> PLATFORM CONTROL PLANE</div>
-          <h1>Good morning, Arjun.</h1>
+          <h1>Good morning, {firstName}.</h1>
           <p>Configure, monitor, and activate client workspaces from one place.</p>
         </div>
         <button className="primary-button" data-testid="new-client-button" onClick={() => setPage("Clients")}>
@@ -21,7 +22,6 @@ export default function Overview({ data, setPage }) {
         <Metric label="Total clients" value={m.total_tenants} detail={`${m.active_tenants} active · ${m.onboarding_tenants} onboarding`} icon={Building2} />
         <Metric label="Platform revenue" value={money(m.platform_revenue)} detail="Across active clients" icon={BarChart3} tone="blue" />
         <Metric label="Integration health" value={`${m.integration_health}%`} detail="WhatsApp · Payments · Catalog" icon={Cloud} tone="green" />
-        <Metric label="Automation runs" value={m.automation_runs} detail="This billing period" icon={Zap} tone="orange" />
       </div>
       <div className="admin-grid">
         <section className="panel">
