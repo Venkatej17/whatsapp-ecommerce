@@ -7,13 +7,17 @@ export default function Overview({ data, setPage, refresh }) {
   const orders = data.orders || [];
   const t = data.tenant || {};
   const m = data.metrics || {};
+  const istHour = Number(
+    new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: false, timeZone: "Asia/Kolkata" }).format(new Date())
+  );
+  const greeting = istHour < 12 ? "Good morning" : istHour < 17 ? "Good afternoon" : "Good evening";
 
   return (
     <section className="content">
       <div className="page-heading">
         <div>
           <div className="eyebrow"><span className="pulse" /> LIVE WORKSPACE</div>
-          <h1>Good morning, {t.name || "team"}.</h1>
+          <h1>{greeting}, {t.name || "team"}.</h1>
           <p>Here's the operational pulse for <b>{t.name}</b>.</p>
         </div>
         <div className="heading-actions">

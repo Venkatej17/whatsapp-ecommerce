@@ -5,7 +5,7 @@ import hmac
 import json
 import os
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Any, Dict, List, Optional
 
 import httpx
@@ -33,6 +33,13 @@ def decrypt(value: str) -> str:
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
+
+
+IST = timezone(timedelta(hours=5, minutes=30))
+
+
+def now_ist_display() -> str:
+    return datetime.now(IST).strftime("Today, %I:%M %p")
 
 
 def new_id(prefix: str) -> str:
@@ -376,8 +383,8 @@ def build_router(db, master_user_dep, tenant_owner_dep, audit_fn):
             "pickup_location_name": pickup_loc.get("name", "") if recalculated["fulfilment"] == "STORE_PICKUP" else "",
             "loyalty_points_applied": recalculated.get("loyalty_points_applied", 0),
             "notes": "", "assigned_to": "", "cart_id": cart_id, "source": "WhatsApp",
-            "timeline": [{"status": "NEW", "at": datetime.now(timezone.utc).strftime("Today, %I:%M %p"), "by": acting_user_name}],
-            "created_at": datetime.now(timezone.utc).strftime("Today, %I:%M %p"),
+            "timeline": [{"status": "NEW", "at": now_ist_display(), "by": acting_user_name}],
+            "created_at": now_ist_display(),
         }
         await db.orders.insert_one(dict(order))
         await db.carts.update_one({"id": cart_id}, {"$set": {"status": "checked_out", "order_id": order_id, "updated_at": now_iso()}})
@@ -389,7 +396,7 @@ def build_router(db, master_user_dep, tenant_owner_dep, audit_fn):
             {"tenant_id": tenant_id, "phone": cart["phone"]},
             {"$setOnInsert": {"id": new_id("cust"), "tenant_id": tenant_id, "phone": cart["phone"], "name": cart["customer"], "tags": ["new"]},
              "$inc": {"orders_count": 1, "total_spent": recalculated["total"], "loyalty_points": earn - redeem},
-             "$set": {"last_order_at": datetime.now(timezone.utc).strftime("Today, %I:%M %p")}},
+             "$set": {"last_order_at": now_ist_display()}},
             upsert=True,
         )
         order["loyalty_points_earned"] = earn
@@ -452,7 +459,7 @@ def build_router(db, master_user_dep, tenant_owner_dep, audit_fn):
 
     async def _log_message(tenant_id: str, phone: str, customer: str, direction: str, body: str, cart_id: Optional[str] = None, order_id: Optional[str] = None):
         conv = await db.conversations.find_one({"tenant_id": tenant_id, "phone": phone}, {"_id": 0})
-        message = {"from": "customer" if direction == "in" else "bot", "body": body, "at": datetime.now(timezone.utc).strftime("Today, %I:%M %p")}
+        message = {"from": "customer" if direction == "in" else "bot", "body": body, "at": now_ist_display()}
         if not conv:
             conv = {
                 "id": new_id("conv"), "tenant_id": tenant_id, "customer": customer, "phone": phone,

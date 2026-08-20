@@ -6,12 +6,16 @@ import { money } from "../../api";
 export default function Overview({ data, setPage, user }) {
   const m = data.metrics || {};
   const firstName = user?.name?.split(" ")[0] || "there";
+  const istHour = Number(
+    new Intl.DateTimeFormat("en-US", { hour: "numeric", hour12: false, timeZone: "Asia/Kolkata" }).format(new Date())
+  );
+  const greeting = istHour < 12 ? "Good morning" : istHour < 17 ? "Good afternoon" : "Good evening";
   return (
     <section className="content">
       <div className="page-heading">
         <div>
           <div className="eyebrow"><span className="pulse" /> PLATFORM CONTROL PLANE</div>
-          <h1>Good morning, {firstName}.</h1>
+          <h1>{greeting}, {firstName}.</h1>
           <p>Configure, monitor, and activate client workspaces from one place.</p>
         </div>
         <button className="primary-button" data-testid="new-client-button" onClick={() => setPage("Clients")}>

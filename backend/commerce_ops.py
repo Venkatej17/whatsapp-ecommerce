@@ -23,6 +23,13 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, Tabl
 INVOICES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "invoices")
 os.makedirs(INVOICES_DIR, exist_ok=True)
 
+IST = timezone(timedelta(hours=5, minutes=30))
+
+
+def now_ist_display() -> str:
+    return datetime.now(IST).strftime("Today, %I:%M %p")
+
+
 
 # --------- Invoice signing (public download link) ---------
 def _sign(order_id: str) -> str:
@@ -188,7 +195,7 @@ STATUS_TEMPLATES = {
 
 
 async def _log_bot_message(db, tenant_id: str, phone: str, customer: str, body: str, order_id: str = ""):
-    ts = datetime.now(timezone.utc).strftime("Today, %I:%M %p")
+    ts = now_ist_display()
     message = {"from": "bot", "body": body, "at": ts}
     existing = await db.conversations.find_one({"tenant_id": tenant_id, "phone": phone}, {"_id": 0})
     if existing:

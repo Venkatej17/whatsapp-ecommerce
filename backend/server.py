@@ -23,6 +23,15 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+# All customer/staff-facing timestamps display in India time regardless of
+# server location (Render runs in UTC) — this SaaS is India-first.
+IST = timezone(timedelta(hours=5, minutes=30))
+
+
+def now_ist_display() -> str:
+    return datetime.now(IST).strftime("Today, %I:%M %p")
+
+
 def new_id(prefix: str) -> str:
     return f"{prefix}_{uuid.uuid4().hex[:10]}"
 
@@ -764,7 +773,7 @@ async def update_order_status(order_id: str, payload: OrderStatusIn, user=Depend
     allowed = VALID_TRANSITIONS.get(current, [])
     if payload.status not in allowed and payload.status != current:
         raise HTTPException(400, f"Cannot move from {current} to {payload.status}")
-    entry = {"status": payload.status, "at": datetime.now(timezone.utc).strftime("Today, %I:%M %p"), "by": user["name"], "note": payload.note or ""}
+    entry = {"status": payload.status, "at": now_ist_display(), "by": user["name"], "note": payload.note or ""}
     result = await db.orders.find_one_and_update(
         {"id": order_id, "tenant_id": tid},
         {"$set": {"status": payload.status}, "$push": {"timeline": entry}},
@@ -837,8 +846,8 @@ async def create_manual_order(payload: ManualOrderIn, user=Depends(tenant_owner)
         "fulfilment": payload.fulfilment, "payment": payload.payment, "status": "NEW",
         "address": payload.address, "pickup_code": f"PC{uuid.uuid4().hex[:4].upper()}" if payload.fulfilment == "STORE_PICKUP" else "",
         "notes": "", "assigned_to": "",
-        "timeline": [{"status": "NEW", "at": datetime.now(timezone.utc).strftime("Today, %I:%M %p"), "by": user["name"]}],
-        "created_at": datetime.now(timezone.utc).strftime("Today, %I:%M %p"),
+        "timeline": [{"status": "NEW", "at": now_ist_display(), "by": user["name"]}],
+        "created_at": now_ist_display(),
     }
     await db.orders.insert_one(doc)
     await audit(tid, user, "order.created", order_id, {"customer": payload.customer})
